@@ -37,6 +37,7 @@
 #endif
 
 #include <stdio.h>
+#include <sys/time.h>
 #include <time.h>
 #include <limits.h>
 #include <string.h>
@@ -416,16 +417,19 @@ int dump_write_airodump_ng_logcsv_add_ap(const struct AP_info * ap_cur,
 	}
 
 	// Local computer time
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
 	const struct tm * ltime = localtime(&ap_cur->tlast);
 	REQUIRE(ltime != NULL);
 	fprintf(opt.f_logcsv,
-			"%04d-%02d-%02d %02d:%02d:%02d,",
+			"%04d-%02d-%02d %02d:%02d:%02d.%03ld,",
 			1900 + ltime->tm_year,
 			1 + ltime->tm_mon,
 			ltime->tm_mday,
 			ltime->tm_hour,
 			ltime->tm_min,
-			ltime->tm_sec);
+			ltime->tm_sec,
+			tv.tv_usec / 1000);
 
 	// Gps time
 	fprintf(opt.f_logcsv,
